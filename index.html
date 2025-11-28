@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>inexistência</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="snow-container"></div> 
+
+    <div id="intro-screen" class="full-screen-overlay">
+        <p class="intro-text">hi</p>
+    </div>
+
+    <div id="view-widget">
+        <p class="widget-label">VIEWS:</p> 
+        <span id="views-number">...</span>
+    </div>
+
+    <div id="main-content" class="profile-container hidden">
+        
+        <img src="2bdc91b31e09c94550f1cab8f555fe8a.jpg" alt="Ícone do Usuário" class="user-icon" id="album-cover">
+        
+        <p class="nickname"><span id="typed-text"></span><span class="blinking-cursor">_</span></p>
+
+        <p class="description-line">backend dev</p>
+
+        <div class="social-links">
+            <a href="https://www.last.fm/user/cleansek" target="_blank">
+                <img src="lastfm.png" alt="Last.fm" class="social-icon">
+            </a>
+            <a href="https://open.spotify.com/user/361jh9uidgtehjy6euheny508" target="_blank">
+                <img src="spotify.png" alt="Spotify" class="social-icon">
+            </a>
+        </div>
+        
+        <div id="music-player-minimalist">
+            <div class="player-wrapper-minimalist">
+                
+                <div class="album-and-text-minimalist">
+                    <img src="music_cover.jpg" alt="Capa da Música" class="cover-art-minimalist"> 
+                    <span class="favorite-none-text">None</span>
+                </div>
+                
+                <div class="playback-area-minimalist">
+                    <span id="current-time" class="time-display">0:00</span>
+                    <input type="range" id="progress-bar" value="0" step="0.1" min="0" max="100">
+                    <span id="duration-time" class="time-display">0:00</span>
+                </div>
+                
+                <div class="player-controls-minimalist">
+                    <button class="control-btn" id="play-pause-btn">
+                        <img src="pause.png" alt="Pause" class="control-icon play-pause-icon" id="play-pause-icon">
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+        </div>
+    
+    <div id="album-modal" class="modal-hide">
+        <img id="modal-image" src="" alt="Capa da Música Ampliada">
+    </div>
+    
+    <audio id="audio-source" loop>
+        <source src="You Did a Good Thing.mp3" type="audio/mp3">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+    
+    <script src="script.js"></script>
+</body>
+</html>
