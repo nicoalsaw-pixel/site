@@ -12,29 +12,33 @@ const API_URL = 'https://backend-65c0.onrender.com/api/views'; // Durante o dese
 
 
 // --- LÓGICA DO CONTADOR DE VISUALIZAÇÕES ---
+// script.js (Dentro da função updateViewCounter)
+
 async function updateViewCounter() {
     try {
-        const response = await fetch(API_URL);
-
-        // ✅ CORREÇÃO: Verifica se a resposta HTTP é bem-sucedida (status 2xx)
-        if (!response.ok) { 
-            console.error(`Erro HTTP: ${response.status} ${response.statusText}. O servidor backend pode estar offline.`);
-            document.getElementById('views-number').textContent = 'Erro';
-            return;
+        // Gera um timestamp (número único) para forçar o navegador a não usar o cache
+        const timestamp = new Date().getTime();
+        
+        // Concatena o timestamp à URL da API
+        const response = await fetch(`${API_URL}?t=${timestamp}`); 
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        // Tenta ler o JSON somente se a resposta for OK
+        
         const data = await response.json();
-
-        if (data.views !== undefined) {
-            document.getElementById('views-number').textContent = data.views.toLocaleString();
-        } else {
-            document.getElementById('views-number').textContent = 'Erro';
+        
+        // Se houver um elemento com id 'view-count', atualiza-o
+        const viewCountElement = document.getElementById('view-count');
+        if (viewCountElement) {
+            viewCountElement.textContent = data.views;
         }
+
+        // OPCIONAL: Se você colocou a mensagem de debug no backend, pode mostrá-la aqui.
+        console.log(data.message); 
 
     } catch (error) {
-        console.error("Erro ao conectar ao backend (falha de rede ou JSON inválido):", error);
-        document.getElementById('views-number').textContent = 'Offline';
+        console.error("Erro ao atualizar o contador de visualizações:", error);
     }
 }
 // ... (resto do código)
