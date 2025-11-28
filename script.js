@@ -14,9 +14,11 @@ const API_URL = 'https://backend-65c0.onrender.com/api/views'; // Durante o dese
 // --- LÓGICA DO CONTADOR DE VISUALIZAÇÕES ---
 // script.js (Dentro da função updateViewCounter)
 
+// script.js (Dentro da função updateViewCounter)
+
 async function updateViewCounter() {
     try {
-        // Gera um timestamp (número único) para forçar o navegador a não usar o cache
+        // Gera um timestamp para evitar o cache
         const timestamp = new Date().getTime();
         
         // Concatena o timestamp à URL da API
@@ -26,15 +28,19 @@ async function updateViewCounter() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data = await response.json();
+        // Recebe o objeto JSON completo (Ex: { "views": 42, "message": "..." })
+        const data = await response.json(); 
         
-        // Se houver um elemento com id 'view-count', atualiza-o
+        // Extrai o valor de 'views' do objeto de dados
+        const viewsCount = data.views; 
+
+        // Atualiza o elemento HTML com o número de visualizações
         const viewCountElement = document.getElementById('view-count');
         if (viewCountElement) {
-            viewCountElement.textContent = data.views;
+            viewCountElement.textContent = viewsCount; // <--- AGORA USA APENAS O NÚMERO
         }
 
-        // OPCIONAL: Se você colocou a mensagem de debug no backend, pode mostrá-la aqui.
+        // Exibe a mensagem de debug no console (opcional)
         console.log(data.message); 
 
     } catch (error) {
