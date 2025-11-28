@@ -7,10 +7,10 @@ const port = 3000;
 
 // Conexão com o Banco de Dados PostgreSQL
 const pool = new Pool({
-  user: 'seu_usuario',
-  host: 'seu_host_bd',
-  database: 'seu_banco',
-  password: 'sua_senha',
+  user: 'views_ajkd_user',
+  host: 'dpg-d4kfa80gjchc73a4t800-a',
+  database: 'dpg-d4kfa80gjchc73a4t800-a.oregon-postgres.render.com',
+  password: 'aDuBktg7jKKmzFLluJKv524SfBeGgd6A',
   port: 5432, // Porta padrão do Postgre
 });
 
