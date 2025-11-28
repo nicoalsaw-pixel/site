@@ -5,7 +5,7 @@ const TYPING_DELAY = 1500;
 
 // script.js
 // Mude de const API_URL = '/views.php'; para:
-const API_URL = 'http://localhost:3000/api/views'; // Durante o desenvolvimento
+const API_URL = 'https://backend-65c0.onrender.com'; // Durante o desenvolvimento
 // OU para a URL de produção do seu backend
 
 // ... (o restante do seu código JavaScript permanece o mesmo)
