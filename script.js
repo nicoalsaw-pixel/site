@@ -16,35 +16,47 @@ const API_URL = 'https://backend-65c0.onrender.com/api/views'; // Durante o dese
 
 // script.js (Dentro da função updateViewCounter)
 
+// script.js - FUNÇÃO updateViewCounter() CORRIGIDA
+
 async function updateViewCounter() {
+    // URL completa da API (garantindo que esteja correta)
+    const API_URL = 'https://backend-65c0.onrender.com/api/views'; 
+
     try {
-        // Gera um timestamp para evitar o cache
+        // 1. Geração de Timestamp para Cache-Busting
         const timestamp = new Date().getTime();
         
-        // Concatena o timestamp à URL da API
+        // 2. Chamada à API
         const response = await fetch(`${API_URL}?t=${timestamp}`); 
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        // Recebe o objeto JSON completo (Ex: { "views": 42, "message": "..." })
+        // 3. Processamento da Resposta
         const data = await response.json(); 
         
-        // Extrai o valor de 'views' do objeto de dados
-        const viewsCount = data.views; 
-
-        // Atualiza o elemento HTML com o número de visualizações
-        const viewCountElement = document.getElementById('view-count');
+        // 🚨 4. CORREÇÃO PRINCIPAL: Busca o ID correto do HTML (views-number)
+        const viewCountElement = document.getElementById('views-number');
+        
         if (viewCountElement) {
-            viewCountElement.textContent = viewsCount; // <--- AGORA USA APENAS O NÚMERO
+            // Atualiza o conteúdo do elemento com o número de visualizações
+            viewCountElement.textContent = data.views; 
+        } else {
+            console.error("Elemento HTML com ID 'views-number' não encontrado.");
         }
 
-        // Exibe a mensagem de debug no console (opcional)
+        // 5. Log para Debug
         console.log(data.message); 
 
     } catch (error) {
         console.error("Erro ao atualizar o contador de visualizações:", error);
+        
+        // Se a API falhar, mostra "Erro"
+        const viewCountElement = document.getElementById('views-number');
+        if (viewCountElement) {
+            viewCountElement.textContent = 'Erro';
+        }
     }
 }
 // ... (resto do código)
