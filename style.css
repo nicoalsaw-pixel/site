@@ -68,21 +68,21 @@ body::before {
     text-shadow: 0 0 8px white;
 }
 
-/* 2. Contêiner Principal */
+/* 2. Contêiner Principal (REMOVENDO OPACIDADE DA CAIXA) */
 .profile-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 20px;
+    padding: 20px; /* Reduz o padding para o original */
     z-index: 1; 
+    
+    /* REMOVIDO: background, border-radius, box-shadow */
 
-    /* === NOVO: ESTILOS PARA EFEITO 3D === */
     perspective: 1000px; 
     transform-style: preserve-3d; 
     transition: transform 0.1s ease-out; 
     will-change: transform; 
-    /* ================================== */
 }
 
 /* 3. Estilo do Ícone do Usuário */
@@ -169,14 +169,14 @@ body::before {
     justify-content: center;
     align-items: center;
     z-index: 2000;
-    opacity: 1;
+    opacity: 1; 
     transition: opacity 0.5s ease-out;
 }
 .intro-text {
     font-size: 5em;
     color: white;
     text-shadow: 0 0 10px white;
-    opacity: 0;
+    opacity: 0; 
     transition: opacity 1s ease-in;
     cursor: url('Snowflake.cur'), default; 
 }
@@ -188,9 +188,9 @@ body::before {
 }
 
 
-/* --- PLAYER DE MÚSICA MINIMALISTA --- */
+/* --- PLAYER DE MÚSICA MINIMALISTA (REMOVENDO OPACIDADE DA CAIXA) --- */
 #music-player-minimalist {
-    padding: 8px 0px; 
+    padding: 8px 0px; /* Reduz o padding para o original */
     border-radius: 0; 
     width: auto; 
     max-width: 600px; 
@@ -198,13 +198,10 @@ body::before {
     display: flex;
     justify-content: center; 
     align-items: center;
+
+    /* REMOVIDO: background, border-radius, box-shadow */
     
-    /* === NOVO: ESTILOS PARA EFEITO 3D === */
-    perspective: 800px; 
-    transform-style: preserve-3d;
-    transition: transform 0.1s ease-out;
-    will-change: transform;
-    /* ================================== */
+    margin-top: 10px; 
 }
 
 .player-wrapper-minimalist {
@@ -238,7 +235,6 @@ body::before {
     font-family: Arial, Helvetica, sans-serif; 
     font-size: 1.5em;
     color: #ffffff; 
-    text-transform: uppercase;
     font-weight: bold;
     letter-spacing: 0.5px;
     cursor: default;
