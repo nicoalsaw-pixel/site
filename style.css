@@ -76,6 +76,13 @@ body::before {
     text-align: center;
     padding: 20px;
     z-index: 1; 
+
+    /* === NOVO: ESTILOS PARA EFEITO 3D === */
+    perspective: 1000px; 
+    transform-style: preserve-3d; 
+    transition: transform 0.1s ease-out; 
+    will-change: transform; 
+    /* ================================== */
 }
 
 /* 3. Estilo do Ícone do Usuário */
@@ -191,6 +198,13 @@ body::before {
     display: flex;
     justify-content: center; 
     align-items: center;
+    
+    /* === NOVO: ESTILOS PARA EFEITO 3D === */
+    perspective: 800px; 
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+    /* ================================== */
 }
 
 .player-wrapper-minimalist {
@@ -219,11 +233,9 @@ body::before {
     cursor: default;
 }
 
-/* Texto "None" */
+/* Texto "None" (Agora Sans-serif) */
 .favorite-none-text {
-    /* *** ALTERAÇÃO APLICADA AQUI *** */
     font-family: Arial, Helvetica, sans-serif; 
-    /* ******************************* */
     font-size: 1.5em;
     color: #ffffff; 
     text-transform: uppercase;

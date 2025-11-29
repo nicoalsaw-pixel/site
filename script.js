@@ -8,15 +8,47 @@ const TYPING_DELAY = 1500;
 const API_URL = 'https://backend-65c0.onrender.com/api/views'; // Durante o desenvolvimento
 // OU para a URL de produção do seu backend
 
-// ... (o restante do seu código JavaScript permanece o mesmo)
+// Função para iniciar o efeito de digitação
+function startTypingEffect(elementId, text) {
+    const element = document.getElementById(elementId);
+    let i = 0;
+    if (!element) return;
+    element.textContent = ''; // Limpa o texto inicial
+
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, TYPING_SPEED);
+        } else {
+            // Delay antes de parar o efeito (se necessário)
+            // setTimeout(() => {}, TYPING_DELAY); 
+        }
+    }
+    type();
+}
+
+// Lógica de manipulação do modal
+const albumCover = document.getElementById('album-cover');
+const albumModal = document.getElementById('album-modal');
+const modalImage = document.getElementById('modal-image');
+
+if(albumCover && albumModal && modalImage) {
+    albumCover.addEventListener('click', () => {
+        modalImage.src = albumCover.src;
+        albumModal.classList.add('modal-show');
+    });
+
+    albumModal.addEventListener('click', (e) => {
+        // Fecha o modal se o clique não for na imagem
+        if (e.target !== modalImage) {
+            albumModal.classList.remove('modal-show');
+        }
+    });
+}
 
 
 // --- LÓGICA DO CONTADOR DE VISUALIZAÇÕES ---
-// script.js (Dentro da função updateViewCounter)
-
-// script.js (Dentro da função updateViewCounter)
-
-// script.js - FUNÇÃO updateViewCounter() CORRIGIDA
 
 async function updateViewCounter() {
     // URL completa da API (garantindo que esteja correta)
@@ -34,168 +66,190 @@ async function updateViewCounter() {
         }
         
         // 3. Processamento da Resposta
-        const data = await response.json(); 
+        const data = await response.json();
         
-        // 🚨 4. CORREÇÃO PRINCIPAL: Busca o ID correto do HTML (views-number)
-        const viewCountElement = document.getElementById('views-number');
-        
-        if (viewCountElement) {
-            // Atualiza o conteúdo do elemento com o número de visualizações
-            viewCountElement.textContent = data.views; 
-        } else {
-            console.error("Elemento HTML com ID 'views-number' não encontrado.");
+        // 4. Atualização da UI
+        const viewsNumberElement = document.getElementById('views-number');
+        if (viewsNumberElement && data && data.views !== undefined) {
+            viewsNumberElement.textContent = data.views;
         }
-
-        // 5. Log para Debug
-        console.log(data.message); 
 
     } catch (error) {
-        console.error("Erro ao atualizar o contador de visualizações:", error);
-        
-        // Se a API falhar, mostra "Erro"
-        const viewCountElement = document.getElementById('views-number');
-        if (viewCountElement) {
-            viewCountElement.textContent = 'Erro';
+        console.error("Erro ao buscar contador de visualizações:", error);
+        // Em caso de erro, define um fallback (opcional)
+        const viewsNumberElement = document.getElementById('views-number');
+        if (viewsNumberElement) {
+            viewsNumberElement.textContent = '???';
         }
     }
 }
-// ... (resto do código)
 
-// --- EFEITO DE DIGITAÇÃO ---
-function startProfileEffects() {
-    const typedTextElement = document.getElementById('typed-text');
-    let charIndex = 0;
 
-    function typeEffect() {
-        if (charIndex < TYPING_TEXT.length) {
-            typedTextElement.textContent += TYPING_TEXT.charAt(charIndex);
-            charIndex++;
-            setTimeout(typeEffect, TYPING_SPEED);
-        } else {
-            setTimeout(() => {
-                typedTextElement.textContent = ""; 
-                charIndex = 0; 
-                typeEffect();
-            }, TYPING_DELAY);
-        }
-    }
+// --- LÓGICA DO PLAYER DE MÚSICA MINIMALISTA ---
 
-    typeEffect();
-}
-
-// --- LÓGICA DO PLAYER DE MÚSICA ---
 function setupMusicPlayer() {
     const audio = document.getElementById('audio-source');
     const playPauseBtn = document.getElementById('play-pause-btn');
-    const playPauseIcon = document.getElementById('play-pause-icon'); 
+    const playPauseIcon = document.getElementById('play-pause-icon');
     const progressBar = document.getElementById('progress-bar');
     const currentTimeDisplay = document.getElementById('current-time');
     const durationTimeDisplay = document.getElementById('duration-time');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
 
+    if (!audio || !playPauseBtn || !playPauseIcon || !progressBar || !currentTimeDisplay || !durationTimeDisplay) {
+        console.error("Um ou mais elementos do player de música não foram encontrados.");
+        return;
+    }
 
-    if (!audio || !playPauseBtn || !playPauseIcon) return;
-
-    // Função para formatar o tempo em MM:SS
-    const formatTime = (seconds) => {
+    function formatTime(seconds) {
         const minutes = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-    };
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    }
 
-    // 1. Configuração de Volume
-    audio.volume = 0.5;
+    // Inicializa a barra de progresso e duração quando o áudio carregar
+    audio.addEventListener('loadedmetadata', () => {
+        progressBar.max = audio.duration;
+        durationTimeDisplay.textContent = formatTime(audio.duration);
+    });
 
-    // 2. Evento de Play/Pause (Alterna entre pause.png e play.png)
+    // Toggle Play/Pause
     playPauseBtn.addEventListener('click', () => {
         if (audio.paused) {
             audio.play();
-            // Troca para o ícone de PAUSE
-            playPauseIcon.src = 'pause.png'; 
-            playPauseIcon.alt = 'Pause';
         } else {
             audio.pause();
-            // Troca para o ícone de PLAY (Você deve ter um 'play.png')
-            playPauseIcon.src = 'stop.png'; 
-            playPauseIcon.alt = 'Play';
         }
     });
 
-    // 3. Controle de Progresso e Tempo
-    if (progressBar) {
-        audio.addEventListener('timeupdate', () => {
-            const progress = (audio.currentTime / audio.duration) * 100;
-            progressBar.value = isNaN(progress) ? 0 : progress; 
-            currentTimeDisplay.textContent = formatTime(audio.currentTime);
-        });
-
-        audio.addEventListener('loadedmetadata', () => {
-            durationTimeDisplay.textContent = formatTime(audio.duration);
-            progressBar.max = 100;
-        });
-
-        progressBar.addEventListener('input', () => {
-            const newTime = (progressBar.value / 100) * audio.duration;
-            audio.currentTime = newTime;
-        });
-    }
-    
-    // 4. Reset ao Final
-    audio.addEventListener('ended', () => {
-        // Volta para o ícone de PLAY
+    // Atualiza o ícone de Play/Pause
+    audio.addEventListener('play', () => {
+        playPauseIcon.src = 'pause.png';
+        playPauseIcon.alt = 'Pause';
+    });
+    audio.addEventListener('pause', () => {
         playPauseIcon.src = 'play.png';
         playPauseIcon.alt = 'Play';
-        if (progressBar) progressBar.value = 0;
-        if (currentTimeDisplay) currentTimeDisplay.textContent = '0:00';
     });
-    
-    // 5. Placeholders para Prev/Next
-    if (prevBtn) prevBtn.addEventListener('click', () => console.log('Música anterior...'));
-    if (nextBtn) nextBtn.addEventListener('click', () => console.log('Próxima música...'));
+
+    // Atualiza o progresso e o tempo
+    audio.addEventListener('timeupdate', () => {
+        progressBar.value = audio.currentTime;
+        currentTimeDisplay.textContent = formatTime(audio.currentTime);
+    });
+
+    // Manipula a barra de progresso
+    progressBar.addEventListener('input', () => {
+        audio.currentTime = progressBar.value;
+    });
 }
 
 
-// --- EFEITO FAIRY DUST (POLES DE FADA) ---
+// --- EFEITO DE FAIRY DUST (Poeira de Fada) ---
+
 function setupFairyDustEffect() {
-    document.addEventListener('mousemove', (e) => {
-        const particle = document.createElement('div');
-        particle.classList.add('fairy-dust-particle');
-        document.body.appendChild(particle);
+    const body = document.body;
 
-        particle.style.left = e.clientX + 'px';
-        particle.style.top = e.clientY + 'px';
+    body.addEventListener('mousemove', (e) => {
+        // Cria um novo elemento de partícula
+        const dust = document.createElement('div');
+        dust.className = 'fairy-dust-particle';
+        
+        // Define o tamanho aleatório (2px a 4px)
+        const size = Math.random() * 2 + 2; 
+        dust.style.width = `${size}px`;
+        dust.style.height = `${size}px`;
+        
+        // Define a posição inicial no cursor
+        dust.style.left = `${e.clientX}px`;
+        dust.style.top = `${e.clientY}px`;
+        
+        // Define o tempo de vida da animação (0.5s a 1s)
+        const duration = Math.random() * 0.5 + 0.5;
+        dust.style.animationDuration = `${duration}s`;
 
-        const size = Math.random() * 5 + 5; 
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
+        body.appendChild(dust);
 
-        particle.addEventListener('animationend', () => {
-            particle.remove();
-        });
+        // Remove a partícula após a animação
+        setTimeout(() => {
+            dust.remove();
+        }, duration * 1000); 
     });
 }
 
-// --- CONTROLE DE CURSOR ---
-function setupCursorToggle() {
-    const customCursor = `url('Snowflake.cur'), default`; 
-    document.body.style.cursor = customCursor;
+
+// --- FUNÇÃO PARA APLICAR EFEITO 3D NO MOUSE ---
+
+function apply3DEffect(element) {
+    if (!element) return; 
+
+    // Valores máximos de rotação e translação para o efeito
+    const MAX_ROTATION_X = 5; // Rotação máxima em X (vertical)
+    const MAX_ROTATION_Y = 10; // Rotação máxima em Y (horizontal)
+    const MAX_TRANSLATE_Z = 20; // Movimento máximo para frente (ilusão de 3D)
+
+    element.addEventListener('mousemove', (e) => {
+        const { clientX, clientY } = e;
+        const { left, top, width, height } = element.getBoundingClientRect();
+
+        // Calcula a posição do mouse em relação ao centro do elemento (-1 a 1)
+        const xAxis = (clientX - (left + width / 2)) / (width / 2); 
+        const yAxis = (clientY - (top + height / 2)) / (height / 2); 
+
+        // Calcula as rotações (quanto mais longe do centro, maior a rotação)
+        const rotateX = -yAxis * MAX_ROTATION_X; // Inverte o eixo Y para rotação natural
+        const rotateY = xAxis * MAX_ROTATION_Y;
+
+        // Calcula o movimento Z (quanto mais perto do centro, mais para frente)
+        const proximity = (1 - (Math.abs(xAxis) + Math.abs(yAxis)) / 2);
+        const translateZ = MAX_TRANSLATE_Z * proximity;
+
+        // Aplica as transformações CSS
+        element.style.transform = `
+            perspective(1000px)
+            rotateX(${rotateX}deg)
+            rotateY(${rotateY}deg)
+            translateZ(${translateZ}px)
+        `;
+    });
+
+    element.addEventListener('mouseleave', () => {
+        // Reseta as transformações quando o mouse sai do elemento
+        element.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+    });
 }
 
 
-// --- EFEITO DE INTRODUÇÃO E EXIBIÇÃO DO CONTEÚDO (MAIN) ---
+// --- LÓGICA DO CURSOR DE SNOWFLAKE (Oculta ao sair da janela) ---
+
+function setupCursorToggle() {
+    const body = document.body;
+    // Oculta o cursor personalizado ao sair da janela
+    document.addEventListener('mouseout', (e) => {
+        if (!e.relatedTarget && !e.toElement) {
+            body.style.cursor = 'default';
+        }
+    });
+
+    // Restaura o cursor personalizado ao retornar à janela
+    document.addEventListener('mouseover', (e) => {
+        if (body.style.cursor === 'default') {
+            body.style.cursor = "url('Snowflake.cur'), default";
+        }
+    });
+}
+
+
+// --- INICIALIZAÇÃO GERAL ---
+
+function startProfileEffects() {
+    startTypingEffect('typed-text', TYPING_TEXT);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const introScreen = document.getElementById('intro-screen');
-    const introText = introScreen.querySelector('.intro-text');
     const mainContent = document.getElementById('main-content');
-    
-    setTimeout(() => {
-        introText.style.opacity = 1;
-    }, 500); 
 
-    document.addEventListener('keydown', handleInteractionOnce);
-    document.addEventListener('click', handleInteractionOnce); 
-
+    // Função de interação única para iniciar tudo
     function handleInteractionOnce() {
         document.removeEventListener('keydown', handleInteractionOnce);
         document.removeEventListener('click', handleInteractionOnce);
@@ -233,6 +287,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateViewCounter();
     }
     
+    // Adiciona o listener para iniciar o site (clique ou tecla)
+    document.addEventListener('keydown', handleInteractionOnce);
+    document.addEventListener('click', handleInteractionOnce);
+
     document.getElementById('views-number').textContent = '...'; 
     
     setupMusicPlayer();
@@ -240,4 +298,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFairyDustEffect();
     
     setupCursorToggle(); 
+
+    // === NOVO: APLICAR EFEITO 3D ===
+    const profileContainer = document.querySelector('.profile-container');
+    const musicPlayerMinimalist = document.getElementById('music-player-minimalist');
+    
+    apply3DEffect(profileContainer);
+    apply3DEffect(musicPlayerMinimalist);
+    // ===============================
 });
